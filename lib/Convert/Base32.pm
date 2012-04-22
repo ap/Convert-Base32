@@ -8,7 +8,7 @@ use Exporter qw( );
 
 use vars qw( $VERSION @ISA @EXPORT );
 
-$VERSION = '0.05';
+$VERSION = '0.06';
 
 push @ISA, 'Exporter';
 @EXPORT = qw( encode_base32 decode_base32 );
@@ -166,6 +166,8 @@ bits at the end of output buffer are not all zero".
 decode_base32 differs from the specification in that upper case
 letters are treated as their lower case equivalent rather than
 producing an error.
+
+=back
 
 =head1 AUTHOR
 

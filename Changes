@@ -1,5 +1,8 @@
 Revision history for Perl extension Convert::Base32.
 
+0.06  Sun Apr 22 2012
+    - POD fix.
+
 0.05  Thu Jan 25 2010
     - Reinstated support for 5.6.
     - Reinstated support for older ExtUtils::MakeMaker.
