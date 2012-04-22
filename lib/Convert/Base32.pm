@@ -8,7 +8,7 @@ use Exporter qw( );
 
 use vars qw( $VERSION @ISA @EXPORT );
 
-$VERSION = '0.04';
+$VERSION = '0.05';
 
 push @ISA, 'Exporter';
 @EXPORT = qw( encode_base32 decode_base32 );
@@ -27,12 +27,28 @@ for (0..$#syms) {
     $char2bits[ ord uc $sym ] = $bin;
 
     do {
-        $bits2char{$bin} = $sym;
+	$bits2char{$bin} = $sym;
     } while $bin =~ s/(.+)0\z/$1/s;
 }
 
 
-sub encode_base32($) {
+sub encode_base32_pre58($) {
+    length($_[0]) == bytes::length($_[0])
+	or Carp::croak('Data contains non-bytes');
+
+    my $str = unpack('B*', $_[0]);
+
+    if (length($str) < 8*1024) {
+	return join '', @bits2char{ $str =~ /.{1,5}/g };
+    } else {
+	# Slower, but uses less memory
+	$str =~ s/(.{5})/$bits2char{$1}/sg;
+	return $str;
+    }
+}
+
+
+sub encode_base32_perl58($) {
     $_[0] =~ tr/\x00-\xFF//c
 	and Carp::croak('Data contains non-bytes');
 
@@ -48,7 +64,29 @@ sub encode_base32($) {
 }
 
 
-sub decode_base32($) {
+sub decode_base32_pre58($) {
+    ( length($_[0]) != bytes::length($_[0]) || $_[0] =~ tr/a-zA-Z2-7//c )
+	and Carp::croak('Data contains non-base32 characters');
+
+    my $str;
+    if (length($_[0]) < 8*1024) {
+	$str = join '', @char2bits[ unpack 'C*', $_[0] ];
+    } else {
+	# Slower, but uses less memory
+	($str = $_[0]) =~ s/(.)/$char2bits[ord($1)]/sg;
+    }
+
+    my $padding = length($str) % 8;
+    $padding < 5
+	or Carp::croak('Length of data invalid');
+    $str =~ s/0{$padding}\z//
+	or Carp::croak('Padding bits at the end of output buffer are not all zero');
+
+    return pack('B*', $str);
+}
+
+
+sub decode_base32_perl58($) {
     $_[0] =~ tr/a-zA-Z2-7//c
 	and Carp::croak('Data contains non-base32 characters');
 
@@ -67,6 +105,16 @@ sub decode_base32($) {
 	or Carp::croak('Padding bits at the end of output buffer are not all zero');
 
     return pack('B*', $str);
+}
+
+
+if ($] lt '5.800000') {
+    require bytes;
+    *encode_base32 = \&encode_base32_pre58;
+    *decode_base32 = \&decode_base32_pre58;
+} else {
+    *encode_base32 = \&encode_base32_perl58;
+    *decode_base32 = \&decode_base32_perl58;
 }
 
 

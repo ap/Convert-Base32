@@ -49,9 +49,9 @@ for (@tests) {
     my ($e, $dlen) = @$_;
     $e = "aaaaaaaa$e";
     if ($dlen =~ /^[0-9]+\z/) {
-        lives_and { is length(decode_base32($e)), 5+$dlen } "$e (ok)";
+	lives_and { is length(decode_base32($e)), 5+$dlen } "$e (ok)";
     } else {
-        dies_ok { decode_base32($e) } "$e ($dlen)";
+	dies_ok { decode_base32($e) } "$e ($dlen)";
     }
 }
 
@@ -64,14 +64,14 @@ for my $o (0..511) {
     if ( ( $o >= ord('a') && $o <= ord('z') )
     ||   ( $o >= ord('A') && $o <= ord('Z') )
     ||   ( $o >= ord('2') && $o <= ord('7') ) ) {
-        lives_ok { decode_base32("aaaaaaa$c") } sprintf('decode U+%04X (ok)', $o);
+	lives_ok { decode_base32("aaaaaaa$c") } sprintf('decode U+%04X (ok)', $o);
     } else {
-        dies_ok { decode_base32("aaaaaaa$c") } sprintf('decode U+%04X (bad)', $o)
+	dies_ok { decode_base32("aaaaaaa$c") } sprintf('decode U+%04X (bad)', $o)
     }
 
     if ($o < 256) {
-        lives_ok { encode_base32($c) } sprintf('encode U+%04X (ok)', $o);
+	lives_ok { encode_base32($c) } sprintf('encode U+%04X (ok)', $o);
     } else {
-        dies_ok { encode_base32($c) } sprintf('encode U+%04X (bad)', $o);
+	dies_ok { encode_base32($c) } sprintf('encode U+%04X (bad)', $o);
     }
 }
