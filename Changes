@@ -1,5 +1,8 @@
 Revision history for Perl extension Convert::Base32.
 
+0.04  Thu Jan 07 2009
+	- Documentation fixes
+
 0.03  Wed Jan 06 2009
 	- Allow uppercase letters in input [RT#53015]
 	- Fixed bug in error check [RT#53014]

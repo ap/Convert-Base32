@@ -8,7 +8,7 @@ use Exporter qw( );
 
 use vars qw( $VERSION @ISA @EXPORT );
 
-$VERSION = '0.03';
+$VERSION = '0.04';
 
 push @ISA, 'Exporter';
 @EXPORT = qw( encode_base32 decode_base32 );
@@ -92,8 +92,7 @@ encoding, specified in RACE internet-draft. The Base32 encoding is
 designed to encode non-ASCII characters in DNS-compatible host name
 parts.
 
-See http://www.ietf.org/internet-drafts/draft-ietf-idn-race-03.txt for
-more details.
+See http://tools.ietf.org/html/draft-ietf-idn-race-03 for more details.
 
 =head1 FUNCTIONS
 
@@ -115,6 +114,10 @@ function takes a string to decode and returns the decoded string.
 This function might throw the exceptions such as "Data contains
 non-base32 characters", "Length of data invalid" and "Padding
 bits at the end of output buffer are not all zero".
+
+decode_base32 differs from the specification in that upper case
+letters are treated as their lower case equivalent rather than
+producing an error.
 
 =head1 AUTHOR
 
